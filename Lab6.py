@@ -45,10 +45,10 @@ if N % 2 == 0:
 else:
     n_second = n+1
 
-B = A[:n_first,:n_first]
-C = A[:n_first,n_second::]
-D = A[n_second::,n_second::]
-E = A[n_second::,:n_first]
+B = A[:n_second,:n_second]
+C = A[:n_second,n_first::]
+D = A[n_first::,n_first::]
+E = A[n_first::,:n_second]
 
 # Печатаем матрицы A, E, B, C, D
 print('\nМатрица A:\n', A)
