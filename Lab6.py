@@ -1,4 +1,4 @@
-import matplotlib.pyplot as mpl #Импорт библиотек
+#Импорт библиотек
 import numpy as np
 
 # Тестовые данные
