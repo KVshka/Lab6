@@ -1,20 +1,20 @@
-#Импорт библиотек
+#Задание состоит из двух частей. 1 часть – написать программу в соответствии со своим вариантом задания. 2 часть – усложнить написанную программу, введя по своему усмотрению в условие минимум одно ограничение на характеристики объектов и целевую функцию для оптимизации решения.
+
+#Вариант 24
+
+#Часть 2
+
+#В первой строке  матрицы должно быть чётное количество нулей. 
+#Периметр квадрата, составленного из главных и побочных диагоналей подматриц результирующей матрицы,
+#должен содержать максимальное число нулей (за исключением нулевой матрицы)
+
+import matplotlib.pyplot as mpl #Импорт библиотек
 import numpy as np
 import re
 
 # Тестовые данные
 N_test = 10
-A_test = np.array([[9, 7, 0, 7, 6, 0, 5, 7, 0, 0],
-    [1, 6, -5, -1, -4, -1, 10, 5, -10, -6],
-    [-8, -2, -3, 7, 9, 1, 8, 0, 9, 5],
-    [-7, 6, 0, -8, 4, 2, 1, -8, -5, -1],
-    [-3, -9, -4, -1, -5, -3, -6, 9, 7, -6],
-    [-7, 1, 7, 8, -3, 5, 7, -1, -7, -6],
-    [-1, 6, -5, 2, 2, 2, 3, 10, -8, 4],
-    [-4, -2, 1, -2, -2, -4, -7, -10, 15, 5],
-    [2, -3, 0, -7, -1, 0, 9, -8, 9, 4],
-    [-8, -10, 3, 0, -5, 10, -8, -10, -1, 8]
-    ])
+A_test = np.ones((N_test, N_test), dtype=int)
 
 print('Использовать тестовые данные или случайные?')
 while True:
@@ -31,88 +31,49 @@ if choice == '2': # Генерация случайных данных
         N = int(input("Введите число N="))
         if N < 2:
             print('Число N слишком малое. Введите N >= 2')
+        elif N % 2 != 0:
+            print('Введите чётное число N')
         else:
             break
-
 #Формируем матрицу А
     A = np.random.randint(-10, 10, size=(N, N))
-            
+
 if choice == 'q':
     exit()
 
 n = N // 2  # Размерность матриц B, C, D, E (n x n)
-n_first = n
-if N % 2 == 0:
-    n_second = n
-else:
-    n_second = n+1
+Zero = np.zeros((n, n), dtype=int)
+B = A[:n,:n]
+C = A[:n,n::]
+D = A[n::,n::]
+E = A[n::,:n]
 
-B = A[:n_first,:n_first]
-C = A[:n_first,n_second::]
-D = A[n_second::,n_second::]
-E = A[n_second::,:n_first]
+def F(x, Z):
+    if x == 0:
+        return Zero
+    else:
+        return np.copy(Z)
 
-# Печатаем матрицы A, E, B, C, D
-print('\nМатрица A:\n', A)
-print('\nМатрица B:\n', B)
-print('\nМатрица C:\n', C)
-print('\nМатрица D:\n', D)
-print('\nМатрица E:\n', E)
 
-def Null(x):
-    if x % 2 != 0:
-        if A[0][n_second] == 0:
-            return 0
-    if len(re.findall(r'\D[0]', str(A[:1,:]))) > 0:
-        if len(re.findall(r'\D[0]', str(A[:1,:n_first]))) == 0:
-            if len(re.findall(r'\D[0]', str(A[:1,n_first::]))) == n:
-                return 3
-            else:
-                return 1
-        elif len(re.findall(r'\D[0]', str(A[:1,n_first::]))) == 0:
-            if len(re.findall(r'\D[0]', str(A[:1,:n_first]))) == n:
-                return 4
-            else:
-                return 2
-        elif len(re.findall(r'\D[0]', str(A[:1,:]))) == n:
-            return 5
-        else:
-            return 0
-    else:
-        return 6
+#заменяем подматрицы нулевыми матрицами
+max = -1
 
-max = max(len(re.findall(r'\D[0]', str(np.diag(E)))), len(re.findall(r'\D[0]', str(np.diag(np.flip(D, axis = 1))))))
-A_copy = np.copy(A)
-if Null(N) == 0:
-    print("Данная матрица не удовлетворяет условию")
-if Null(N) == 1:
-    A_copy[:n_first,n_second::] = 0
-if Null(N) == 2:
-    A_copy[:n_first,:n_first] = 0
-if Null(N) == 3:
-    if max > len(re.findall(r'\D[0]', str(np.diag(np.flip(B, axis = 1))))):
-        A_copy[:n_first,:n_first] = 0
-    elif len(re.findall(r'\D[0]', str(np.diag(E)))) > len(re.findall(r'\D[0]', str(np.diag(np.flip(D, axis = 1))))):
-        A_copy[n_second::,n_second::] = 0
-    else:
-        A_copy[n_second::,:n_first] = 0
-if Null(N) == 4:
-    if max > len(re.findall(r'\D[0]', str(np.diag(C)))):
-        A_copy[:n_first,n_second::] = 0
-    elif len(re.findall(r'\D[0]', str(np.diag(E)))) > len(re.findall(r'\D[0]', str(np.diag(np.flip(D, axis = 1))))):
-        A_copy[n_second::,n_second::] = 0
-    else:
-        A_copy[n_second::,:n_first] = 0
-if Null(N) == 5:
-    if len(re.findall(r'\D[0]', str(np.diag(E)))) > len(re.findall(r'\D[0]', str(np.diag(np.flip(D, axis = 1))))):
-        A_copy[n_second::,n_second::] = 0
-    else:
-        A_copy[n_second::,:n_first] = 0
-if Null(N) == 6:
-    if len(re.findall(r'\D[0]', str(np.diag(C)))) > len(re.findall(r'\D[0]', str(np.diag(np.flip(B, axis = 1))))):
-        A_copy[:n_first,:n_first] = 0
-    else:
-        A_copy[:n_first,n_second::] = 0
+for a in range(2):
+    B_copy = F(a, B)
+    for b in range(2):
+        C_copy = F(b, C)
+        for c in range(2):
+            E_copy = F(c, E)
+            for d in range(2):
+                D_copy = F(d, D)
+                Matrix = np.vstack((np.hstack((B_copy, C_copy)), np.hstack((E_copy, D_copy))))
+                #Ограничение: первая строка матрицы должна содержать чётное количество нулей
+                if len(re.findall(r'\D[0]', str(Matrix[:1,:N]))) % 2 == 0 and len(re.findall(r'\D[0]', str(Matrix[:N,:N]))) != N*N:
+                    #Периметр квадрата, составленного из главных и побочных диагоналей подматриц результирующей матрицы, должен содержать максимальное число нулей
+                    sum = len(re.findall(r'\D[0]', str(np.diag(np.flip(B_copy, axis = 1))))) + len(re.findall(r'\D[0]', str(np.diag(C_copy)))) + len(re.findall(r'\D[0]', str(np.diag(np.flip(D_copy, axis = 1))))) + len(re.findall(r'\D[0]', str(np.diag(E_copy))))
+                    if max < sum:
+                        max = sum
+                        Result = np.copy(Matrix)
 
-print('\nРезультирующая матрица:\n', A_copy)
+print('\nРезультирующая матрица:\n', Result)
 
