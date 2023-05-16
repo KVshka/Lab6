@@ -84,7 +84,7 @@ if np.linalg.matrix_rank(B) % 2 != 0 or np.linalg.matrix_rank(C) % 2 != 0:
         for d in range(2):
             D_copy = F(d, D)
             Matrix = np.vstack((np.hstack((B_copy, C_copy)), np.hstack((E_copy, D_copy))))
-            sum = S(K, np.diag(np.flip(B_copy, axis = 1))) + S(K, np.diag(C_copy)) + S(K, np.diag(np.flip(D_copy, axis = 1))) + S(K, np.diag(E_copy))
+            sum = Sum(K, np.diag(np.flip(B_copy, axis = 1))) + Sum(K, np.diag(C_copy)) + Sum(K, np.diag(np.flip(D_copy, axis = 1))) + Sum(K, np.diag(E_copy))
             if max < sum:
                 max = sum
                 Result = np.copy(Matrix)
