@@ -5,13 +5,11 @@
 #Часть 2
 
 #В первой строке  матрицы должно быть чётное количество нулей. 
-#Периметр квадрата, составленного из главных и побочных диагоналей подматриц результирующей матрицы,
-#должен содержать максимальное число нулей (за исключением нулевой матрицы)
+#Сумма элементов квадрата, составленного из главных и побочных диагоналей подматриц результирующей матрицы, по модулю K должна быть максимальной. K вводится с клавиатуры
 
-import matplotlib.pyplot as mpl #Импорт библиотек
+#Импорт библиотек
 import numpy as np
 import re
-
 # Тестовые данные
 N_test = 10
 A_test = np.ones((N_test, N_test), dtype=int)
@@ -41,6 +39,11 @@ if choice == '2': # Генерация случайных данных
 if choice == 'q':
     exit()
 
+while True:
+    K = int(input("Введите число K (модуль)="))
+    if K:
+        break
+
 n = N // 2  # Размерность матриц B, C, D, E (n x n)
 Zero = np.zeros((n, n), dtype=int)
 B = A[:n,:n]
@@ -48,32 +51,58 @@ C = A[:n,n::]
 D = A[n::,n::]
 E = A[n::,:n]
 
+print('\nМатрица A:\n', A)
+print('\nМатрица B:\n', B)
+print('\nМатрица C:\n', C)
+print('\nМатрица D:\n', D)
+print('\nМатрица E:\n', E)
+print('\nРанг матрицы B:\n', np.linalg.matrix_rank(B))
+print('\nРанг матрицы C:\n', np.linalg.matrix_rank(C))
+
 def F(x, Z):
     if x == 0:
-        return Zero
+        return np.copy(Zero)
     else:
         return np.copy(Z)
 
+#Сумма элементов квадрата, составленного из главных и побочных диагоналей подматриц результирующей матрицы, по модулю K должна быть максимальной. K вводится с клавиатуры
+def Sum(x, Z):
+    a = 0
+    for i in Z:
+        a += i%x
+    return a
 
 #заменяем подматрицы нулевыми матрицами
-max = -1
+max = -11
+#Ограничение: первая строка матрицы должна содержать чётное количество нулей
 
-for a in range(2):
-    B_copy = F(a, B)
-    for b in range(2):
-        C_copy = F(b, C)
-        #Ограничение: первая строка матрицы должна содержать чётное количество нулей
-        if (len(re.findall(r'\D[0]', str(B_copy[:1,:n]))) + len(re.findall(r'\D[0]', str(C_copy[:1,:n])))) % 2 == 0:
+if np.linalg.matrix_rank(B) % 2 != 0 or np.linalg.matrix_rank(C) % 2 != 0:
+    B_copy = np.copy(Zero)
+    C_copy = np.copy(Zero)
+    for c in range(2):
+        E_copy = F(c, E)
+        for d in range(2):
+            D_copy = F(d, D)
+            Matrix = np.vstack((np.hstack((B_copy, C_copy)), np.hstack((E_copy, D_copy))))
+            sum = S(K, np.diag(np.flip(B_copy, axis = 1))) + S(K, np.diag(C_copy)) + S(K, np.diag(np.flip(D_copy, axis = 1))) + S(K, np.diag(E_copy))
+            if max < sum:
+                max = sum
+                Result = np.copy(Matrix)
+else:
+    for a in range(2):
+        B_copy = F(a, B)
+        for b in range(2):
+            C_copy = F(b, C)
             for c in range(2):
                 E_copy = F(c, E)
                 for d in range(2):
                     D_copy = F(d, D)
                     Matrix = np.vstack((np.hstack((B_copy, C_copy)), np.hstack((E_copy, D_copy))))
-                    if len(re.findall(r'\D[0]', str(Matrix[:N,:N]))) != N*N:
-                        #Периметр квадрата, составленного из главных и побочных диагоналей подматриц результирующей матрицы, должен содержать максимальное число нулей
-                        sum = len(re.findall(r'\D[0]', str(np.diag(np.flip(B_copy, axis = 1))))) + len(re.findall(r'\D[0]', str(np.diag(C_copy)))) + len(re.findall(r'\D[0]', str(np.diag(np.flip(D_copy, axis = 1))))) + len(re.findall(r'\D[0]', str(np.diag(E_copy))))
+                    if len(re.findall(r'\D[0]', str(Matrix[:1,:N]))) % 2 == 0 and len(re.findall(r'\D[0]', str(Matrix[:1,:N]))) > 0:
+                        sum = Sum(K, np.diag(np.flip(B_copy, axis = 1))) + Sum(K, np.diag(C_copy)) + Sum(K, np.diag(np.flip(D_copy, axis = 1))) + Sum(K, np.diag(E_copy))
                         if max < sum:
                             max = sum
                             Result = np.copy(Matrix)
 
 print('\nРезультирующая матрица:\n', Result)
+
