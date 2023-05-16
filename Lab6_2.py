@@ -62,18 +62,18 @@ for a in range(2):
     B_copy = F(a, B)
     for b in range(2):
         C_copy = F(b, C)
-        for c in range(2):
-            E_copy = F(c, E)
-            for d in range(2):
-                D_copy = F(d, D)
-                Matrix = np.vstack((np.hstack((B_copy, C_copy)), np.hstack((E_copy, D_copy))))
-                #Ограничение: первая строка матрицы должна содержать чётное количество нулей
-                if len(re.findall(r'\D[0]', str(Matrix[:1,:N]))) % 2 == 0 and len(re.findall(r'\D[0]', str(Matrix[:N,:N]))) != N*N:
-                    #Периметр квадрата, составленного из главных и побочных диагоналей подматриц результирующей матрицы, должен содержать максимальное число нулей
-                    sum = len(re.findall(r'\D[0]', str(np.diag(np.flip(B_copy, axis = 1))))) + len(re.findall(r'\D[0]', str(np.diag(C_copy)))) + len(re.findall(r'\D[0]', str(np.diag(np.flip(D_copy, axis = 1))))) + len(re.findall(r'\D[0]', str(np.diag(E_copy))))
-                    if max < sum:
-                        max = sum
-                        Result = np.copy(Matrix)
+        #Ограничение: первая строка матрицы должна содержать чётное количество нулей
+        if (len(re.findall(r'\D[0]', str(B_copy[:1,:n]))) + len(re.findall(r'\D[0]', str(C_copy[:1,:n])))) % 2 == 0:
+            for c in range(2):
+                E_copy = F(c, E)
+                for d in range(2):
+                    D_copy = F(d, D)
+                    Matrix = np.vstack((np.hstack((B_copy, C_copy)), np.hstack((E_copy, D_copy))))
+                    if len(re.findall(r'\D[0]', str(Matrix[:N,:N]))) != N*N:
+                        #Периметр квадрата, составленного из главных и побочных диагоналей подматриц результирующей матрицы, должен содержать максимальное число нулей
+                        sum = len(re.findall(r'\D[0]', str(np.diag(np.flip(B_copy, axis = 1))))) + len(re.findall(r'\D[0]', str(np.diag(C_copy)))) + len(re.findall(r'\D[0]', str(np.diag(np.flip(D_copy, axis = 1))))) + len(re.findall(r'\D[0]', str(np.diag(E_copy))))
+                        if max < sum:
+                            max = sum
+                            Result = np.copy(Matrix)
 
 print('\nРезультирующая матрица:\n', Result)
-
