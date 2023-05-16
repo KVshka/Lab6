@@ -53,11 +53,11 @@ E = A[n::,:n]
 
 print('\nМатрица A:\n', A)
 print('\nМатрица B:\n', B)
+print('\nРанг матрицы B:\n', np.linalg.matrix_rank(B))
 print('\nМатрица C:\n', C)
+print('\nРанг матрицы C:\n', np.linalg.matrix_rank(C))
 print('\nМатрица D:\n', D)
 print('\nМатрица E:\n', E)
-print('\nРанг матрицы B:\n', np.linalg.matrix_rank(B))
-print('\nРанг матрицы C:\n', np.linalg.matrix_rank(C))
 
 def F(x, Z):
     if x == 0:
